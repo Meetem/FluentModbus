@@ -202,7 +202,8 @@ namespace FluentModbus
         }
 
         ///<inheritdoc/>
-        protected override Span<byte> TransceiveFrame(byte unitIdentifier, ModbusFunctionCode functionCode, Action<ExtendedBinaryWriter> extendFrame)
+        protected override Span<byte> TransceiveFrame<T>(byte unitIdentifier, ModbusFunctionCode functionCode, Action<ExtendedBinaryWriter, FrameData<T>> extendFrame, FrameData<T> frameData)
+            where T: struct
         {
             // WARNING: IF YOU EDIT THIS METHOD, REFLECT ALL CHANGES ALSO IN TransceiveFrameAsync!
 
@@ -228,7 +229,7 @@ namespace FluentModbus
 
             // build request
             writer.Seek(7, SeekOrigin.Begin);
-            extendFrame(writer);
+            extendFrame(writer, frameData);
             frameLength = (int)writer.BaseStream.Position;
 
             writer.Seek(0, SeekOrigin.Begin);

@@ -161,7 +161,7 @@ namespace FluentModbus
             {
                 var result = ModbusServer.RequestValidator(UnitIdentifier, functionCode, address, quantityOfRegisters);
 
-                if (result > ModbusExceptionCode.OK)
+                if (result > ModbusExceptionCode.Ok)
                 {
                     WriteExceptionResponse(functionCode, result);
                     return false;

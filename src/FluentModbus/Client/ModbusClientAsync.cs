@@ -28,12 +28,12 @@ namespace FluentModbus
         /// <param name="cancellationToken">The token to monitor for cancellation requests. The default value is <see cref="CancellationToken.None"/>.</param>
         public async Task<Memory<T>> ReadHoldingRegistersAsync<T>(int unitIdentifier, int startingAddress, int count, CancellationToken cancellationToken = default) where T : unmanaged
         {
-            var unitIdentifier_converted = ConvertUnitIdentifier(unitIdentifier);
-            var startingAddress_converted = ConvertUshort(startingAddress);
-            var count_converted = ConvertUshort(count);
+            var unitIdentifierConverted = ConvertUnitIdentifier(unitIdentifier);
+            var startingAddressConverted = ConvertUshort(startingAddress);
+            var countConverted = ConvertUshort(count);
 
             var dataset = SpanExtensions.Cast<byte, T>(await 
-                ReadHoldingRegistersAsync(unitIdentifier_converted, startingAddress_converted, ConvertSize<T>(count_converted)).ConfigureAwait(false));
+                ReadHoldingRegistersAsync(unitIdentifierConverted, startingAddressConverted, ConvertSize<T>(countConverted)).ConfigureAwait(false));
 
             if (SwapBytes)
                 ModbusUtils.SwitchEndianness(dataset);
@@ -82,13 +82,13 @@ namespace FluentModbus
         /// <param name="cancellationToken">The token to monitor for cancellation requests. The default value is <see cref="CancellationToken.None"/>.</param>
         public async Task WriteMultipleRegistersAsync<T>(int unitIdentifier, int startingAddress, T[] dataset, CancellationToken cancellationToken = default) where T : unmanaged
         {
-            var unitIdentifier_converted = ConvertUnitIdentifier(unitIdentifier);
-            var startingAddress_converted = ConvertUshort(startingAddress);
+            var unitIdentifierConverted = ConvertUnitIdentifier(unitIdentifier);
+            var startingAddressConverted = ConvertUshort(startingAddress);
 
             if (SwapBytes)
                 ModbusUtils.SwitchEndianness(dataset.AsSpan());
 
-            await WriteMultipleRegistersAsync(unitIdentifier_converted, startingAddress_converted, MemoryMarshal.Cast<T, byte>(dataset).ToArray()).ConfigureAwait(false);
+            await WriteMultipleRegistersAsync(unitIdentifierConverted, startingAddressConverted, MemoryMarshal.Cast<T, byte>(dataset).ToArray()).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -137,27 +137,27 @@ namespace FluentModbus
         /// <param name="cancellationToken">The token to monitor for cancellation requests. The default value is <see cref="CancellationToken.None"/>.</param>
         public async Task<Memory<byte>> ReadCoilsAsync(int unitIdentifier, int startingAddress, int quantity, CancellationToken cancellationToken = default)
         {
-            var unitIdentifier_converted = ConvertUnitIdentifier(unitIdentifier);
-            var startingAddress_converted = ConvertUshort(startingAddress);
-            var quantity_converted = ConvertUshort(quantity);
+            var unitIdentifierConverted = ConvertUnitIdentifier(unitIdentifier);
+            var startingAddressConverted = ConvertUshort(startingAddress);
+            var quantityConverted = ConvertUshort(quantity);
 
-            var buffer = (await TransceiveFrameAsync(unitIdentifier_converted, ModbusFunctionCode.ReadCoils, writer =>
+            var buffer = (await TransceiveFrameAsync(unitIdentifierConverted, ModbusFunctionCode.ReadCoils, writer =>
             {
                 writer.Write((byte)ModbusFunctionCode.ReadCoils);                         // 07     Function Code
 
                 if (BitConverter.IsLittleEndian)
                 {
-                    writer.WriteReverse(startingAddress_converted);                       // 08-09  Starting Address
-                    writer.WriteReverse(quantity_converted);                              // 10-11  Quantity of Coils
+                    writer.WriteReverse(startingAddressConverted);                       // 08-09  Starting Address
+                    writer.WriteReverse(quantityConverted);                              // 10-11  Quantity of Coils
                 }
                 else
                 {
-                    writer.Write(startingAddress_converted);                              // 08-09  Starting Address
-                    writer.Write(quantity_converted);                                     // 10-11  Quantity of Coils
+                    writer.Write(startingAddressConverted);                              // 08-09  Starting Address
+                    writer.Write(quantityConverted);                                     // 10-11  Quantity of Coils
                 }
             }, cancellationToken).ConfigureAwait(false)).Slice(2);
 
-            if (buffer.Length < (byte)Math.Ceiling((double)quantity_converted / 8))
+            if (buffer.Length < (byte)Math.Ceiling((double)quantityConverted / 8))
                 throw new ModbusException(ErrorMessage.ModbusClient_InvalidResponseMessageLength);
 
             return buffer;
@@ -172,27 +172,27 @@ namespace FluentModbus
         /// <param name="cancellationToken">The token to monitor for cancellation requests. The default value is <see cref="CancellationToken.None"/>.</param>
         public async Task<Memory<byte>> ReadDiscreteInputsAsync(int unitIdentifier, int startingAddress, int quantity, CancellationToken cancellationToken = default)
         {
-            var unitIdentifier_converted = ConvertUnitIdentifier(unitIdentifier);
-            var startingAddress_converted = ConvertUshort(startingAddress);
-            var quantity_converted = ConvertUshort(quantity);
+            var unitIdentifierConverted = ConvertUnitIdentifier(unitIdentifier);
+            var startingAddressConverted = ConvertUshort(startingAddress);
+            var quantityConverted = ConvertUshort(quantity);
 
-            var buffer = (await TransceiveFrameAsync(unitIdentifier_converted, ModbusFunctionCode.ReadDiscreteInputs, writer =>
+            var buffer = (await TransceiveFrameAsync(unitIdentifierConverted, ModbusFunctionCode.ReadDiscreteInputs, writer =>
             {
                 writer.Write((byte)ModbusFunctionCode.ReadDiscreteInputs);                // 07     Function Code
 
                 if (BitConverter.IsLittleEndian)
                 {
-                    writer.WriteReverse(startingAddress_converted);                       // 08-09  Starting Address
-                    writer.WriteReverse(quantity_converted);                              // 10-11  Quantity of Coils
+                    writer.WriteReverse(startingAddressConverted);                       // 08-09  Starting Address
+                    writer.WriteReverse(quantityConverted);                              // 10-11  Quantity of Coils
                 }
                 else
                 {
-                    writer.Write(startingAddress_converted);                              // 08-09  Starting Address
-                    writer.Write(quantity_converted);                                     // 10-11  Quantity of Coils
+                    writer.Write(startingAddressConverted);                              // 08-09  Starting Address
+                    writer.Write(quantityConverted);                                     // 10-11  Quantity of Coils
                 }
             }, cancellationToken).ConfigureAwait(false)).Slice(2);
 
-            if (buffer.Length < (byte)Math.Ceiling((double)quantity_converted / 8))
+            if (buffer.Length < (byte)Math.Ceiling((double)quantityConverted / 8))
                 throw new ModbusException(ErrorMessage.ModbusClient_InvalidResponseMessageLength);
 
             return buffer;
@@ -208,12 +208,12 @@ namespace FluentModbus
         /// <param name="cancellationToken">The token to monitor for cancellation requests. The default value is <see cref="CancellationToken.None"/>.</param>
         public async Task<Memory<T>> ReadInputRegistersAsync<T>(int unitIdentifier, int startingAddress, int count, CancellationToken cancellationToken = default) where T : unmanaged
         {
-            var unitIdentifier_converted = ConvertUnitIdentifier(unitIdentifier);
-            var startingAddress_converted = ConvertUshort(startingAddress);
-            var count_converted = ConvertUshort(count);
+            var unitIdentifierConverted = ConvertUnitIdentifier(unitIdentifier);
+            var startingAddressConverted = ConvertUshort(startingAddress);
+            var countConverted = ConvertUshort(count);
 
             var dataset = SpanExtensions.Cast<byte, T>(await 
-                ReadInputRegistersAsync(unitIdentifier_converted, startingAddress_converted, ConvertSize<T>(count_converted)).ConfigureAwait(false));
+                ReadInputRegistersAsync(unitIdentifierConverted, startingAddressConverted, ConvertSize<T>(countConverted)).ConfigureAwait(false));
 
             if (SwapBytes)
                 ModbusUtils.SwitchEndianness(dataset);
@@ -261,21 +261,21 @@ namespace FluentModbus
         /// <param name="cancellationToken">The token to monitor for cancellation requests. The default value is <see cref="CancellationToken.None"/>.</param>
         public async Task WriteSingleCoilAsync(int unitIdentifier, int registerAddress, bool value, CancellationToken cancellationToken = default)
         {
-            var unitIdentifier_converted = ConvertUnitIdentifier(unitIdentifier);
-            var registerAddress_converted = ConvertUshort(registerAddress);
+            var unitIdentifierConverted = ConvertUnitIdentifier(unitIdentifier);
+            var registerAddressConverted = ConvertUshort(registerAddress);
 
-            await TransceiveFrameAsync(unitIdentifier_converted, ModbusFunctionCode.WriteSingleCoil, writer =>
+            await TransceiveFrameAsync(unitIdentifierConverted, ModbusFunctionCode.WriteSingleCoil, writer =>
             {
                 writer.Write((byte)ModbusFunctionCode.WriteSingleCoil);                   // 07     Function Code
 
                 if (BitConverter.IsLittleEndian)
                 {
-                    writer.WriteReverse(registerAddress_converted);                       // 08-09  Starting Address
+                    writer.WriteReverse(registerAddressConverted);                       // 08-09  Starting Address
                     writer.WriteReverse((ushort)(value ? 0xFF00 : 0x0000));               // 10-11  Value
                 }
                 else
                 {
-                    writer.Write(registerAddress_converted);                              // 08-09  Starting Address
+                    writer.Write(registerAddressConverted);                              // 08-09  Starting Address
                     writer.Write((ushort)(value ? 0xFF00 : 0x0000));                      // 10-11  Value
                 }
             }, cancellationToken).ConfigureAwait(false);
@@ -290,13 +290,13 @@ namespace FluentModbus
         /// <param name="cancellationToken">The token to monitor for cancellation requests. The default value is <see cref="CancellationToken.None"/>.</param>
         public async Task WriteSingleRegisterAsync(int unitIdentifier, int registerAddress, short value, CancellationToken cancellationToken = default)
         {
-            var unitIdentifier_converted = ConvertUnitIdentifier(unitIdentifier);
-            var registerAddress_converted = ConvertUshort(registerAddress);
+            var unitIdentifierConverted = ConvertUnitIdentifier(unitIdentifier);
+            var registerAddressConverted = ConvertUshort(registerAddress);
 
             if (SwapBytes)
                 value = ModbusUtils.SwitchEndianness(value);
 
-            await WriteSingleRegisterAsync(unitIdentifier_converted, registerAddress_converted, MemoryMarshal.Cast<short, byte>(new [] { value }).ToArray()).ConfigureAwait(false);
+            await WriteSingleRegisterAsync(unitIdentifierConverted, registerAddressConverted, MemoryMarshal.Cast<short, byte>(new [] { value }).ToArray()).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -308,13 +308,13 @@ namespace FluentModbus
         /// <param name="cancellationToken">The token to monitor for cancellation requests. The default value is <see cref="CancellationToken.None"/>.</param>
         public async Task WriteSingleRegisterAsync(int unitIdentifier, int registerAddress, ushort value, CancellationToken cancellationToken = default)
         {
-            var unitIdentifier_converted = ConvertUnitIdentifier(unitIdentifier);
-            var registerAddress_converted = ConvertUshort(registerAddress);
+            var unitIdentifierConverted = ConvertUnitIdentifier(unitIdentifier);
+            var registerAddressConverted = ConvertUshort(registerAddress);
 
             if (SwapBytes)
                 value = ModbusUtils.SwitchEndianness(value);
 
-            await WriteSingleRegisterAsync(unitIdentifier_converted, registerAddress_converted, MemoryMarshal.Cast<ushort, byte>(new[] { value }).ToArray()).ConfigureAwait(false);
+            await WriteSingleRegisterAsync(unitIdentifierConverted, registerAddressConverted, MemoryMarshal.Cast<ushort, byte>(new[] { value }).ToArray()).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -392,18 +392,18 @@ namespace FluentModbus
         public async Task<Memory<TRead>> ReadWriteMultipleRegistersAsync<TRead, TWrite>(int unitIdentifier, int readStartingAddress, int readCount, int writeStartingAddress, TWrite[] dataset, CancellationToken cancellationToken = default) where TRead : unmanaged
                                                                                                                                                                              where TWrite : unmanaged
         {
-            var unitIdentifier_converted = ConvertUnitIdentifier(unitIdentifier);
-            var readStartingAddress_converted = ConvertUshort(readStartingAddress);
-            var readCount_converted = ConvertUshort(readCount);
-            var writeStartingAddress_converted = ConvertUshort(writeStartingAddress);
+            var unitIdentifierConverted = ConvertUnitIdentifier(unitIdentifier);
+            var readStartingAddressConverted = ConvertUshort(readStartingAddress);
+            var readCountConverted = ConvertUshort(readCount);
+            var writeStartingAddressConverted = ConvertUshort(writeStartingAddress);
 
             if (SwapBytes)
                 ModbusUtils.SwitchEndianness(dataset.AsSpan());
 
-            var readQuantity = ConvertSize<TRead>(readCount_converted);
+            var readQuantity = ConvertSize<TRead>(readCountConverted);
             var byteData = MemoryMarshal.Cast<TWrite, byte>(dataset).ToArray();
 
-            var dataset2 = SpanExtensions.Cast<byte, TRead>(await ReadWriteMultipleRegistersAsync(unitIdentifier_converted, readStartingAddress_converted, readQuantity, writeStartingAddress_converted, byteData).ConfigureAwait(false));
+            var dataset2 = SpanExtensions.Cast<byte, TRead>(await ReadWriteMultipleRegistersAsync(unitIdentifierConverted, readStartingAddressConverted, readQuantity, writeStartingAddressConverted, byteData).ConfigureAwait(false));
 
             if (SwapBytes)
                 ModbusUtils.SwitchEndianness(dataset2);

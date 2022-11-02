@@ -56,7 +56,7 @@ namespace FluentModbus
 
         #region Fields
 
-        private Task? _task_process_requests;
+        private Task? _taskProcessRequests;
         private ManualResetEventSlim _manualResetEvent;
 
         private Dictionary<byte, byte[]> _inputRegisterBufferMap = new();
@@ -148,7 +148,7 @@ namespace FluentModbus
         /// </summary>
         public bool EnableRaisingEvents { get; set; }
 
-        private protected CancellationTokenSource CTS { get; private set; } = new CancellationTokenSource();
+        private protected CancellationTokenSource Cts { get; private set; } = new CancellationTokenSource();
 
         private protected bool IsReady
         {
@@ -310,12 +310,12 @@ namespace FluentModbus
         /// </summary>
         protected virtual void StopProcessing()
         {
-            CTS?.Cancel();
+            Cts?.Cancel();
             _manualResetEvent?.Set();
 
             try
             {
-                _task_process_requests?.Wait();
+                _taskProcessRequests?.Wait();
             }
             catch (Exception ex) when (ex.InnerException.GetType() == typeof(TaskCanceledException))
             {
@@ -328,23 +328,23 @@ namespace FluentModbus
         /// </summary>
         protected virtual void StartProcessing()
         {
-            CTS = new CancellationTokenSource();
+            Cts = new CancellationTokenSource();
 
             if (!IsAsynchronous)
             {
                 // only process requests when it is explicitly triggered
-                _task_process_requests = Task.Run(() =>
+                _taskProcessRequests = Task.Run(() =>
                 {
-                    _manualResetEvent.Wait(CTS.Token);
+                    _manualResetEvent.Wait(Cts.Token);
 
-                    while (!CTS.IsCancellationRequested)
+                    while (!Cts.IsCancellationRequested)
                     {
                         ProcessRequests();
 
                         _manualResetEvent.Reset();
-                        _manualResetEvent.Wait(CTS.Token);
+                        _manualResetEvent.Wait(Cts.Token);
                     }
-                }, CTS.Token);
+                }, Cts.Token);
             }
         }
 

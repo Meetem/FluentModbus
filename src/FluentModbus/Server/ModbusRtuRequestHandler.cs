@@ -1,3 +1,4 @@
+#if !NO_RTU_BUILD
 namespace FluentModbus
 {
     internal class ModbusRtuRequestHandler : ModbusRequestHandler, IDisposable
@@ -68,7 +69,7 @@ namespace FluentModbus
 
             // add CRC
             frameLength = unchecked((int)FrameBuffer.Writer.BaseStream.Position);
-            crc = ModbusUtils.CalculateCRC(FrameBuffer.Buffer.AsMemory(0, frameLength));
+            crc = ModbusUtils.CalculateCrc(FrameBuffer.Buffer.AsMemory(0, frameLength));
             FrameBuffer.Writer.Write(crc);
 
             return frameLength + 2;
@@ -154,3 +155,4 @@ namespace FluentModbus
         #endregion
     }
 }
+#endif

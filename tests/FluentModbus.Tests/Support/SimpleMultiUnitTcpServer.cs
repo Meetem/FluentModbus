@@ -22,7 +22,7 @@ namespace FluentModbus.Tests
             /* https://stackoverflow.com/questions/2782802/can-net-task-instances-go-out-of-scope-during-run */
             Task.Run(async () =>
             {
-                while (!CTS.IsCancellationRequested)
+                while (!Cts.IsCancellationRequested)
                 {
                     // There are no default timeouts (SendTimeout and ReceiveTimeout = 0), 
                     // use ConnectionTimeout instead.
@@ -43,7 +43,7 @@ namespace FluentModbus.Tests
                         }
                     }
                 }
-            }, CTS.Token);
+            }, Cts.Token);
         }
 
         public new void AddUnit(byte unitIdentifer)

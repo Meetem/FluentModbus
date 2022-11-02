@@ -5,7 +5,7 @@
     <TargetFrameworkVersion>net6.0</TargetFrameworkVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
     <RestoreAdditionalProjectSources>
       https://www.myget.org/F/apollo3zehn-dev/api/v3/index.json
     </RestoreAdditionalProjectSources>

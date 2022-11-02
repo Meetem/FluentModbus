@@ -31,7 +31,7 @@ namespace FluentModbus.Tests
 
             // Act
             var expected = 0x2384;
-            var actual = ModbusUtils.CalculateCRC(data);
+            var actual = ModbusUtils.CalculateCrc(data);
 
             // Assert
             Assert.Equal(expected, actual);

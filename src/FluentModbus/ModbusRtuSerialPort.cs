@@ -1,4 +1,5 @@
-﻿using System.IO.Ports;
+﻿#if !NO_RTU_BUILD
+using System.IO.Ports;
 
 namespace FluentModbus
 {
@@ -151,3 +152,4 @@ namespace FluentModbus
         #endregion
     }
 }
+#endif

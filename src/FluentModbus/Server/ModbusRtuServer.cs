@@ -1,4 +1,5 @@
-﻿using System.IO.Ports;
+﻿#if !NO_RTU_BUILD
+using System.IO.Ports;
 
 namespace FluentModbus
 {
@@ -161,7 +162,7 @@ namespace FluentModbus
             /* https://stackoverflow.com/questions/2782802/can-net-task-instances-go-out-of-scope-during-run */
             Task.Run(async () =>
             {
-                while (!CTS.IsCancellationRequested)
+                while (!Cts.IsCancellationRequested)
                 {
                     lock (Lock)
                     {
@@ -177,7 +178,7 @@ namespace FluentModbus
 
                     await Task.Delay(TimeSpan.FromSeconds(1));
                 }
-            }, CTS.Token);
+            }, Cts.Token);
         }
 
         /// <summary>
@@ -226,3 +227,4 @@ namespace FluentModbus
         #endregion
     }
 }
+#endif

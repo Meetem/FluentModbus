@@ -1,4 +1,5 @@
-﻿using System.IO.Ports;
+﻿#if !NO_RTU_BUILD
+using System.IO.Ports;
 
 namespace FluentModbus
 {
@@ -179,7 +180,7 @@ namespace FluentModbus
             frameLength = (int)_frameBuffer.Writer.BaseStream.Position;
 
             // add CRC
-            crc = ModbusUtils.CalculateCRC(_frameBuffer.Buffer.AsMemory().Slice(0, frameLength));
+            crc = ModbusUtils.CalculateCrc(_frameBuffer.Buffer.AsMemory().Slice(0, frameLength));
             _frameBuffer.Writer.Write(crc);
             frameLength = (int)_frameBuffer.Writer.BaseStream.Position;
 
@@ -252,3 +253,4 @@ namespace FluentModbus
         #endregion
     }
 }
+#endif

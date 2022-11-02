@@ -1,3 +1,4 @@
+#if !NO_RTU_BUILD
 using System.Diagnostics;
 using Xunit;
 using Xunit.Abstractions;
@@ -46,3 +47,4 @@ namespace FluentModbus.Tests
         }
     }
 }
+#endif

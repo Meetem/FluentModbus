@@ -161,12 +161,12 @@ namespace FluentModbus.Tests
         [Theory]
 
         [InlineData(ModbusFunctionCode.WriteMultipleRegisters, 1, ModbusExceptionCode.IllegalDataAddress)]
-        [InlineData(ModbusFunctionCode.WriteMultipleRegisters, 55, ModbusExceptionCode.OK)]
+        [InlineData(ModbusFunctionCode.WriteMultipleRegisters, 55, ModbusExceptionCode.Ok)]
         [InlineData(ModbusFunctionCode.ReadHoldingRegisters, 91, ModbusExceptionCode.IllegalDataAddress)]
-        [InlineData(ModbusFunctionCode.ReadHoldingRegisters, 2000, ModbusExceptionCode.OK)]
+        [InlineData(ModbusFunctionCode.ReadHoldingRegisters, 2000, ModbusExceptionCode.Ok)]
 
         [InlineData(ModbusFunctionCode.ReadInputRegisters, 999, ModbusExceptionCode.IllegalDataAddress)]
-        [InlineData(ModbusFunctionCode.ReadInputRegisters, 1999, ModbusExceptionCode.OK)]
+        [InlineData(ModbusFunctionCode.ReadInputRegisters, 1999, ModbusExceptionCode.Ok)]
 
         [InlineData(ModbusFunctionCode.ReadCoils, 1999, ModbusExceptionCode.IllegalFunction)]
         public async void RespectsRequestValidator(ModbusFunctionCode functionCode, ushort startingAddress, ModbusExceptionCode exceptionCode)
@@ -186,10 +186,10 @@ namespace FluentModbus.Tests
                     return (functionCode, holdingLimits, inputLimits) switch
                     {
                         // holding registers
-                        (ModbusFunctionCode.ReadHoldingRegisters, true, _)          => ModbusExceptionCode.OK,
-                        (ModbusFunctionCode.ReadWriteMultipleRegisters, true, _)    => ModbusExceptionCode.OK,
-                        (ModbusFunctionCode.WriteMultipleRegisters, true, _)        => ModbusExceptionCode.OK,
-                        (ModbusFunctionCode.WriteSingleRegister, true, _)           => ModbusExceptionCode.OK,
+                        (ModbusFunctionCode.ReadHoldingRegisters, true, _)          => ModbusExceptionCode.Ok,
+                        (ModbusFunctionCode.ReadWriteMultipleRegisters, true, _)    => ModbusExceptionCode.Ok,
+                        (ModbusFunctionCode.WriteMultipleRegisters, true, _)        => ModbusExceptionCode.Ok,
+                        (ModbusFunctionCode.WriteSingleRegister, true, _)           => ModbusExceptionCode.Ok,
 
                         (ModbusFunctionCode.ReadHoldingRegisters, false, _)         => ModbusExceptionCode.IllegalDataAddress,
                         (ModbusFunctionCode.ReadWriteMultipleRegisters, false, _)   => ModbusExceptionCode.IllegalDataAddress,
@@ -197,7 +197,7 @@ namespace FluentModbus.Tests
                         (ModbusFunctionCode.WriteSingleRegister, false, _)          => ModbusExceptionCode.IllegalDataAddress,
 
                         // input registers
-                        (ModbusFunctionCode.ReadInputRegisters, _, true)            => ModbusExceptionCode.OK,
+                        (ModbusFunctionCode.ReadInputRegisters, _, true)            => ModbusExceptionCode.Ok,
                         (ModbusFunctionCode.ReadInputRegisters, _, false)           => ModbusExceptionCode.IllegalDataAddress,
 
                         // deny other function codes
@@ -223,7 +223,7 @@ namespace FluentModbus.Tests
                     _                                           => throw new Exception("Invalid test setup.")
                 };
 
-                if (exceptionCode == ModbusExceptionCode.OK)
+                if (exceptionCode == ModbusExceptionCode.Ok)
                 {
                     action();
                 }

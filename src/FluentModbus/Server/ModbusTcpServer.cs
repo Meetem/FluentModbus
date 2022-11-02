@@ -128,7 +128,7 @@ namespace FluentModbus
             /* https://stackoverflow.com/questions/2782802/can-net-task-instances-go-out-of-scope-during-run */
             Task.Run(async () =>
             {
-                while (!CTS.IsCancellationRequested)
+                while (!Cts.IsCancellationRequested)
                 {
                     // There are no default timeouts (SendTimeout and ReceiveTimeout = 0), 
                     // use ConnectionTimeout instead.
@@ -151,13 +151,13 @@ namespace FluentModbus
                         }
                     }
                 }
-            }, CTS.Token);
+            }, Cts.Token);
 
             // remove clients asynchronously
             /* https://stackoverflow.com/questions/2782802/can-net-task-instances-go-out-of-scope-during-run */
             Task.Run(async () =>
             {
-                while (!CTS.IsCancellationRequested)
+                while (!Cts.IsCancellationRequested)
                 {
                     lock (Lock)
                     {
@@ -193,7 +193,7 @@ namespace FluentModbus
 
                     await Task.Delay(TimeSpan.FromSeconds(1));
                 }
-            }, CTS.Token);
+            }, Cts.Token);
         }
 
         /// <summary>
